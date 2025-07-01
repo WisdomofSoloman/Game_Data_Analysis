@@ -168,9 +168,9 @@ object DataProcess {
     val total_battle =
       """
         |select sum(pvp_battle_count) as total_pvp_count,
-        |       round(sum(pvp_win_count) / sum(pvp_battle_count), 1) * 100 as total_pvp_winrate,
+        |       round((sum(pvp_win_count) / sum(pvp_battle_count)) * 100, 1) as total_pvp_winrate,
         |       sum(pve_battle_count) as total_pve_count,
-        |       round(sum(pve_win_count) / sum(pve_battle_count), 1) * 100 as total_pve_winrate
+        |       round((sum(pve_win_count) / sum(pve_battle_count)) * 100, 1) as total_pve_winrate
         |from t_raids
         |""".stripMargin
     val totalWinRateDf : DataFrame = spark.sql(total_battle)
