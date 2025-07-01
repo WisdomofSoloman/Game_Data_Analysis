@@ -8,6 +8,35 @@ object DataProcess {
     val spark = SparkUtils.getSparkSession()
     val url = SparkUtils.url
     val porp = SparkUtils.prop
+
+    //-------------对原始数据进行简单清洗并集成在一张表上--------------
+    import spark.implicits._
+    val rawPaths = Seq(
+      "E:/data/tap_fun_train.csv",
+      "E:/data/tap_fun_test.csv"
+    )
+    val raw = spark.read
+      .option("header","true")
+      .option("inferSchema","true")
+      .csv(rawPaths: _*)
+
+
+    import org.apache.spark.sql.functions._
+
+    val cleaned = raw
+      .dropDuplicates("user_id")               // 两份里可能有重复 ID，把它去掉
+      .filter($"user_id".isNotNull)
+      .na.fill(0)
+      .withColumn("register_time", to_timestamp($"register_time"))
+
+    cleaned.write
+      .mode("overwrite")
+      .option("truncate","true")  //逻辑删除后再插
+      .jdbc(SparkUtils.url, "cleaned_data", SparkUtils.prop)
+
+
+
+
     /*val defaultDf : DataFrame = spark.read.option("header", "true")
       .option("inferSchema", "true")
       .option("delimiter", ",")
