@@ -8,7 +8,7 @@ object DataProcess {
     val spark = SparkUtils.getSparkSession()
     val url = SparkUtils.url
     val porp = SparkUtils.prop
-    val defaultDf : DataFrame = spark.read.option("header", "true")
+    /*val defaultDf : DataFrame = spark.read.option("header", "true")
       .option("inferSchema", "true")
       .option("delimiter", ",")
       .option("charset", "UTF-8")
@@ -17,7 +17,7 @@ object DataProcess {
 
     defaultDf.createTempView("t_df")
 
-    /*val sqlwashed =
+    val sqlwashed =
       """
         |select user_id,register_time,wood_add_value,wood_reduce_value,
         |       stone_add_value,stone_reduce_value,
@@ -96,7 +96,7 @@ object DataProcess {
         |""".stripMargin
     val MilitaryDf : DataFrame = spark.sql(Military_sql)
     MilitaryDf.write.mode("append").jdbc(SparkUtils.url,"military",SparkUtils.prop)
-*/
+
     val cost_sql =
       """
         |select user_id as id,
@@ -109,12 +109,12 @@ object DataProcess {
 
 
 //用户总消费以及用户总数统计
-    /*val t_Cost_Df : DataFrame = spark.read.jdbc(url, "PlayerCost", porp)
+    val t_Cost_Df : DataFrame = spark.read.jdbc(url, "cost", porp)
     t_Cost_Df.createTempView("t_cost")
     val t_sql_ave_pay =
       """
-        |select count(user_id) as players_count,
-        |       sum(pay_price) as players_paid
+        |select count(id) as players_count,
+        |       sum(paid) as players_paid
         |from t_cost
         |""".stripMargin
     val t_avePayDf : DataFrame = spark.sql(t_sql_ave_pay)
@@ -131,21 +131,21 @@ object DataProcess {
     val avePayDf : DataFrame = spark.sql(sql_ave_pay)
     avePayDf.show()
     avePayDf.write.mode("append").jdbc(url,"ave_player_pay",porp)
-
-    val playerRaidsDf = spark.read.jdbc(url, "PlayerRaids", porp)
+*/
+    val playerRaidsDf = spark.read.jdbc(url, "raids", porp)
     playerRaidsDf.show()
     playerRaidsDf.createTempView("t_raids")
 
-    val playerInfoDf = spark.read.jdbc(url,"playerInfo",porp)
+    val playerInfoDf = spark.read.jdbc(url,"players",porp)
     playerInfoDf.show()
     playerInfoDf.createTempView("t_infos")
 //pve排行前十玩家
-    val pve_desc =
+    /*val pve_desc =
       """
-        |select t1.user_id, register_time, avg_online_minutes, pve_win_count,
+        |select t1.id, reg_time, avg_oltime, pve_win_count,
         |       round((pve_win_count / pve_battle_count) * 100 , 1) as pve_win_rate
         |from t_raids t1, t_infos t2
-        |where t1.user_id = t2.user_id
+        |where t1.id = t2.id
         |order by pve_win_count desc limit 10
         |""".stripMargin
     val topGamerPvEDf : DataFrame = spark.sql(pve_desc)
@@ -155,14 +155,26 @@ object DataProcess {
 //pvp排行前十玩家
     val pvp_desc =
       """
-        |select t1.user_id, register_time, avg_online_minutes, pvp_win_count,
+        |select t1.id, reg_time, avg_oltime, pvp_win_count,
         |       round((pvp_win_count / pvp_battle_count) * 100 , 1) as pvp_win_rate
         |from t_raids t1, t_infos t2
-        |where t1.user_id = t2.user_id
+        |where t1.id = t2.id
         |order by pvp_win_count desc limit 10
         |""".stripMargin
     val topGamerPvPDf : DataFrame = spark.sql(pvp_desc)
     topGamerPvPDf.show()
     topGamerPvPDf.write.mode("append").jdbc(url,"top10_pvp_gamers",porp)*/
+
+    val total_battle =
+      """
+        |select sum(pvp_battle_count) as total_pvp_count,
+        |       round(sum(pvp_win_count) / sum(pvp_battle_count), 1) * 100 as total_pvp_winrate,
+        |       sum(pve_battle_count) as total_pve_count,
+        |       round(sum(pve_win_count) / sum(pve_battle_count), 1) * 100 as total_pve_winrate
+        |from t_raids
+        |""".stripMargin
+    val totalWinRateDf : DataFrame = spark.sql(total_battle)
+    totalWinRateDf.show()
+    totalWinRateDf.write.mode("append").jdbc(url,"total_win_rate",porp)
   }
 }
