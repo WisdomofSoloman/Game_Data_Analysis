@@ -2,14 +2,8 @@ package org.example.playerdataanalysiswebservice;
 
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import org.example.playerdataanalysiswebservice.mapper.CostMapper;
-import org.example.playerdataanalysiswebservice.mapper.PlayerMapper;
-import org.example.playerdataanalysiswebservice.mapper.RaidMapper;
-import org.example.playerdataanalysiswebservice.mapper.TotalWinRateMapper;
-import org.example.playerdataanalysiswebservice.tables.PlayerCost;
-import org.example.playerdataanalysiswebservice.tables.PlayerInfo;
-import org.example.playerdataanalysiswebservice.tables.PlayerRaids;
-import org.example.playerdataanalysiswebservice.tables.TotalWinRate;
+import org.example.playerdataanalysiswebservice.mapper.*;
+import org.example.playerdataanalysiswebservice.tables.*;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -24,6 +18,15 @@ class PlayerdataAnalysisWebServiceApplicationTests {
     private RaidMapper raidMapper;
     @Autowired
     private TotalWinRateMapper totalWinRateMapper;
+    @Autowired
+    private ResMapper resMapper;
+    @Test
+    void getOneRes()
+    {
+        PlayerRes playerRes = resMapper.selectOne(new QueryWrapper<PlayerRes>().eq("id", 15704));
+        System.out.println(playerRes);
+    }
+
     @Test
     void contextLoads() {
         List<PlayerInfo> result =  playerMapper.selectList(

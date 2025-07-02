@@ -7,6 +7,7 @@ import org.example.playerdataanalysiswebservice.tables.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.List;
@@ -26,33 +27,41 @@ public class DataController {
     @Autowired
     public TotalWinRateMapper totalWinRateMapper;
     @Autowired
+    public ResMapper resMapper;
+    @Autowired
     private CostMapper playerCost;
 
+    @RequestMapping("/api/getOneRes")
+    public PlayerRes getOneRes()
+    {
+        PlayerRes playerRes = resMapper.selectOne(new QueryWrapper<PlayerRes>().eq("id", 15824));
+        return playerRes;
+    }
 
-    @RequestMapping("getPlayers")
+    @RequestMapping("/api/getPlayers")
     public List<PlayerInfo> getAllPlayers () {
         return playerMapper.selectList(null );
     }
-    @RequestMapping("getRaids")
+    @RequestMapping("/api/getRaids")
     public List<PlayerRaids> getRaids () {
         List<PlayerRaids> raids = raidMapper.selectList(null);
         return raids;
     }
-    @RequestMapping("getTop10PvePlayers")
+    @RequestMapping("/api/getTop10PvePlayers")
     public List<TopPvEGamers> getTop10PvePlayers () {
         List<TopPvEGamers>  topPvEGamers = topPvEGamersMapper.selectList(null);
         return topPvEGamers;
     }
 
-    @RequestMapping("getTop10PvpPlayers")
+    @RequestMapping("/api/getTop10PvpPlayers")
     public List<TopPvPGamers> getTop10PvpPlayers () {
         List<TopPvPGamers>  topPvPGamers = topPvPGamersMapper.selectList(null);
         return topPvPGamers;
     }
 
-    @RequestMapping("getTotalWinRate")
-    public List<TotalWinRate> getTotalWinRate () {
-        List<TotalWinRate> totalWinRate = totalWinRateMapper.selectList(null);
+    @RequestMapping("/api/getTotalWinRate")
+    public TotalWinRate getTotalWinRate () {
+        TotalWinRate totalWinRate = totalWinRateMapper.selectOne(null);
         return totalWinRate;
     }
 
