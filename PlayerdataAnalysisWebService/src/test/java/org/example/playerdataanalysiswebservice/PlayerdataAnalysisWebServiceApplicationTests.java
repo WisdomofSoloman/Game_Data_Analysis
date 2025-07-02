@@ -2,9 +2,11 @@ package org.example.playerdataanalysiswebservice;
 
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import org.example.playerdataanalysiswebservice.mapper.CostMapper;
 import org.example.playerdataanalysiswebservice.mapper.PlayerMapper;
 import org.example.playerdataanalysiswebservice.mapper.RaidMapper;
 import org.example.playerdataanalysiswebservice.mapper.TotalWinRateMapper;
+import org.example.playerdataanalysiswebservice.tables.PlayerCost;
 import org.example.playerdataanalysiswebservice.tables.PlayerInfo;
 import org.example.playerdataanalysiswebservice.tables.PlayerRaids;
 import org.example.playerdataanalysiswebservice.tables.TotalWinRate;
@@ -43,4 +45,20 @@ class PlayerdataAnalysisWebServiceApplicationTests {
         TotalWinRate winRate = totalWinRateMapper.selectOne(null);
         System.out.println(winRate);
     }
+//查询充钱不为零的
+@Autowired
+private CostMapper playerCost;
+    @Test
+    void test4() {
+        int bCostCount = playerCost.selectList(new QueryWrapper<PlayerCost>().gt("paid", 30)).size();
+        int nCostCount = playerCost.selectList(new QueryWrapper<PlayerCost>().gt("paid", 0).le("paid",30)).size();
+        int zCostCount = playerCost.selectList(new QueryWrapper<PlayerCost>().eq("paid", 0)).size();
+//        int noCostCount = playerCost.countNoneZeroPaid();
+        System.out.println(bCostCount);
+        System.out.println(nCostCount);
+        System.out.println(zCostCount);
+//        System.out.println(noCostCount);
+    }
+
+
 }

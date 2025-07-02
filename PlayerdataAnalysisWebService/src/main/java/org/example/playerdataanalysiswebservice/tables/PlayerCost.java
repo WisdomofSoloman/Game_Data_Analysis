@@ -1,8 +1,16 @@
 package org.example.playerdataanalysiswebservice.tables;
 
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
+
+@TableName("cost")
 public class PlayerCost {
+    @TableId("id")
     private int user_id;
+    @TableField("paid")
     private double pay_price;
+    @TableField("pay_count")
     private Integer pay_count;
 
     public int getPay_count() {

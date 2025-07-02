@@ -7,7 +7,6 @@ import org.example.playerdataanalysiswebservice.tables.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.List;
@@ -15,6 +14,7 @@ import java.util.List;
 @Controller
 @ResponseBody
 public class DataController {
+    //依赖注入,定义接口变量,spring已经创建好变量了.
     @Autowired
     public PlayerMapper playerMapper;
     @Autowired
@@ -25,11 +25,13 @@ public class DataController {
     public TopPvEGamersMapper topPvEGamersMapper;
     @Autowired
     public TotalWinRateMapper totalWinRateMapper;
+    @Autowired
+    private CostMapper playerCost;
+
 
     @RequestMapping("getPlayers")
     public List<PlayerInfo> getAllPlayers () {
-        List<PlayerInfo> players = playerMapper.selectList(null );
-        return players;
+        return playerMapper.selectList(null );
     }
     @RequestMapping("getRaids")
     public List<PlayerRaids> getRaids () {
@@ -52,5 +54,18 @@ public class DataController {
     public List<TotalWinRate> getTotalWinRate () {
         List<TotalWinRate> totalWinRate = totalWinRateMapper.selectList(null);
         return totalWinRate;
+    }
+
+    @RequestMapping("/api/getCostStatistics")
+    @ResponseBody  // 返回JSON格式
+    public CostStatistics getCostStatistics() {
+        CostStatistics stats = new CostStatistics();
+
+        // 查询并设置各类统计值
+        stats.setHighCostCount(playerCost.selectList(new QueryWrapper<PlayerCost>().gt("paid", 30)).size());
+        stats.setMediumCostCount(playerCost.selectList(new QueryWrapper<PlayerCost>().gt("paid", 0).le("paid", 30)).size());
+        stats.setZeroCostCount(playerCost.selectList(new QueryWrapper<PlayerCost>().eq("paid", 0)).size());
+
+        return stats;
     }
 }
