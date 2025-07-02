@@ -6,10 +6,12 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="PlayerDataAnalysis" />
-        <module name="PlayerdataAnalysisWebService" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="PlayerDataAnalysis" target="1.8" />
+      <module name="PlayerdataAnalysisWebService" target="21" />
+    </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
