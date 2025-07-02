@@ -9,7 +9,7 @@ object SparkUtils {
 
   var url = "jdbc:mysql://localhost:3306/spark?serverTimezone=UTC&useUnicode=true&characterEncoding=utf8&useSSL=false&allowPublicKeyRetrieval=true"
   var username = "root"
-  var pwd = "123456"
+  var pwd = "root"
   val prop = new Properties()
   prop.setProperty("user", SparkUtils.username)
   prop.setProperty("password", SparkUtils.pwd)
