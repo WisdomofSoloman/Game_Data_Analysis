@@ -1,3 +1,4 @@
+#树状结构,配置项前面要有空格,要不然就是错误的
 spring:
   datasource:
     url: jdbc:mysql://localhost:3306/spark?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&serverTimezone=Asia/Shanghai&rewriteBatchedStatements=true
@@ -6,4 +7,4 @@ spring:
     password: 123456
 mybatis-plus:
   configuration:
-    map-underscore-to-camel-case: false
+    map-underscore-to-camel-case: false #未采用小驼峰命名法和_匹配
