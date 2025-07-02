@@ -3,9 +3,10 @@
   <component name="NewModuleRootManager" inherit-compiler-output="true">
     <exclude-output />
     <content url="file://$MODULE_DIR$" />
-    <orderEntry type="inheritedJdk" />
+    <orderEntry type="jdk" jdkName="liberica-21" jdkType="JavaSDK" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" name="scala-sdk-2.13.12" level="project" />
+    <orderEntry type="library" exported="" name="scala-sdk-2.13.12" level="project" />
     <orderEntry type="library" name="scala-sdk-2.13.13" level="project" />
+    <orderEntry type="library" name="scala-sdk-2.13.14" level="project" />
   </component>
 </module>
