@@ -1,10 +1,10 @@
 (function() {
     // 获取表格tbody元素
-    const tableBody = document.getElementById('table-body1');
+    const tableBody = document.getElementById('table-body2');
 
     // 发送AJAX请求获取数据
     $.ajax({
-        url: "http://localhost:8080/getTop10PvePlayers",
+        url: "http://localhost:8080/getTop10PvpPlayers",
         type: "GET",
         success: function(res) {
             console.log("响应数据:", res);
@@ -21,8 +21,8 @@
                         <td>${index + 1}</td>
                         <td>${player.id || '-'}</td>
                         <td>${player.avgOnlineTime || '-'}</td>
-                        <td>${player.pveWinCount || '-'}</td>
-                        <td>${player.pveWinRate || '-'}</td>
+                        <td>${player.pvpWinCount || '-'}</td>
+                        <td>${player.pvpWinRate || '-'}</td>
                     `;
                     tableBody.appendChild(row);
                 });
@@ -38,6 +38,6 @@
     });
     $('.table1').click(function() {
         console.log('点击事件触发！');
-        window.location.href = "../pve_top10.html";
+        window.location.href = "../pvp_top10.html";
     });
 })();
