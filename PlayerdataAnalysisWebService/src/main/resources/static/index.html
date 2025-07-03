@@ -4,7 +4,15 @@
     <meta charset="UTF-8">
     <title>Title</title>
     <style>
-        #id1, #id2{
+        #id1{
+            /*设置宽*/
+            width:800px;
+            /*设置高*/
+            height: 500px;
+            /*设置边框长度直线大小*/
+            border: 1px solid brown;
+        }
+        #id2{
             /*设置宽*/
             width:500px;
             /*设置高*/
@@ -12,17 +20,44 @@
             /*设置边框长度直线大小*/
             border: 1px solid brown;
         }
+        #id1 #table1 {
+            text-align: center;
+            vertical-align: middle;
+            border-collapse: collapse;
+        }
+
+        #id1 #table1 th,
+        #id1 #table1 td {
+            border: 1px solid #f0f4ff; /* 为表头和单元格添加边框 */
+            padding: 8px; /* 添加内边距，提升美观度 */
+        }
+
     </style>
     <!--创建html页面,在页面中引入echarts的js库文件 -->
     <script src="js/echarts.min.js"></script>
     <script src="js/jquery.js"></script>
 <body>
 <!--准备一个具备大小的dom容器-->
-<div id="id1"></div>
+<div id="id1" >
+    <table id="table1" style="width: 100%; border-collapse: collapse;">
+        <caption style="font-size: 1.2em; font-weight: bold; margin-bottom: 10px;">胜利场次排名前十</caption>
+        <thead>
+        <tr style="background-color: blanchedalmond">
+            <th>名次</th>
+            <th>id</th>
+            <th>平均在线时长</th>
+            <th>胜利场次</th>
+            <th>胜率</th>
+        </tr>
+        </thead>
+        <tbody id="table-body"></tbody>
+    </table>
+</div>
 <!--javaScript语言,写在标签script里面-->
 <!--<script src="js/test.js"></script>-->
 <hr>
 <div id="id2"></div>
+<script src="js/topTenPveTable.js"></script>
 <script src="js/cost.js"></script>
 
 </body>
