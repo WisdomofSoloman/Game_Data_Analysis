@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>PVP 前 10 玩家</title>
+  <script src="js/echarts.min.js"></script>
+  <style>
+    body { margin: 0; display:flex; justify-content:center; align-items:center; height:100vh; }
+    #chart { width:80vw; height:80vh; }
+  </style>
+</head>
+<body>
+<div id="chart"></div>
+
+<script>
+  /* === 1) 拉数据 === */
+  fetch('http://localhost:8080/getTop10PvpPlayers')
+          .then(res => res.json())
+          .then(list => {
+            console.log(list);   // 调试用，确认字段
+
+            /* === 2) 提取字段 ===
+               如果你没改成驼峰，请把下面的字段名改成 register_time / pvp_win_count … */
+            const names        = list.map(p => p.id);
+            const winCounts    = list.map(p => p.pvpWinCount);
+            const winRates     = list.map(p => p.pvpWinRate);   // 0‒100
+
+            /* === 3) 画图 === */
+            const chart = echarts.init(document.getElementById('chart'));
+
+            chart.setOption({
+              title: { text:'PVP 前 10 玩家', left:'center' },
+              tooltip:{
+                trigger:'axis',
+                axisPointer:{ type:'shadow' },
+                formatter: p => {
+                  const i   = p[0].dataIndex;
+                  const row = list[i];
+                  return `
+            玩家ID：${row.id}<br/>
+            团本胜场：${row.pvpWinCount}<br/>
+            胜率：${row.pvpWinRate}%<br/>
+            平均在线时长：${row.avgOnlineTime}
+          `;
+                }
+              },
+              legend:{ top:30 },
+              xAxis:{ type:'category', data:names, axisLabel:{ rotate:45 } },
+              yAxis:[
+                { type:'value', name:'胜场数' },
+                { type:'value', name:'胜率 (%)', min:0, max:100 }
+              ],
+              series:[
+                {
+                  name:'胜场数',
+                  type:'bar',
+                  data:winCounts,
+                  yAxisIndex:0,
+                  itemStyle:{ borderRadius:4 }
+                },
+                {
+                  name:'胜率',
+                  type:'line',
+                  data:winRates,
+                  yAxisIndex:1,
+                  smooth:true,
+                  symbol:'circle'
+                }
+              ]
+            });
+
+            window.addEventListener('resize', () => chart.resize());
+          })
+          .catch(err => {
+            console.error('拉取 PVP 数据失败：', err);
+            alert('接口调用失败，请打开控制台查看详情');
+          });
+</script>
+</body>
+</html>

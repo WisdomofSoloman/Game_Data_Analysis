@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>PVE 前 10 玩家</title>
+  <script src="js/echarts.min.js"></script>
+  <style>
+    body { margin: 0; display: flex; justify-content: center; align-items: center; height: 100vh; }
+    #chart { width: 80vw; height: 80vh; }
+  </style>
+</head>
+<body>
+<div id="chart"></div>
+
+<script>
+  fetch('http://localhost:8080/getTop10PvePlayers')
+          .then(r => r.json())
+          .then(list => {
+            console.log(list);                     // 调试用
+
+            /* ① 从 JSON 提取三列 */
+            const names         = list.map(p => p.id);
+            const onlineTimes   = list.map(p => p.avgOnlineTime);   // 平均在线时长
+            const raidCounts    = list.map(p => p.pveWinCount);     // 团本数量
+            const winRates      = list.map(p => (p.pveWinRate));    // 0‒100 之间的小数/百分比
+
+            /* ② 画图 */
+            const chart = echarts.init(document.getElementById('chart'));
+
+            chart.setOption({
+              title: { text:'PVE 前 10 玩家', left:'center' },
+              tooltip: { trigger:'axis', axisPointer:{ type:'shadow' },
+                formatter: p => {
+                  const i = p[0].dataIndex;
+                  return `
+            玩家ID：${list[i].id}<br/>
+            平均在线时长：${onlineTimes[i]}<br/>
+            团本数量：${raidCounts[i]}<br/>
+            胜率：${winRates[i]}%
+          `;
+                }
+              },
+              legend: { top: 30 },
+              xAxis: { type:'category', data:names, axisLabel:{ rotate:45 } },
+              yAxis: [
+                { type:'value', name:'团本数量' },              // 左轴：次数
+                { type:'value', name:'胜率 (%)', min:0, max:100 } // 右轴：百分比
+              ],
+              series: [
+                {
+                  name:'团本数量',
+                  type:'bar',
+                  data: raidCounts,
+                  yAxisIndex: 0,
+                  itemStyle:{ borderRadius:4 }
+                },
+                {
+                  name:'胜率',
+                  type:'line',                 // 折线
+                  data: winRates,
+                  yAxisIndex: 1,
+                  smooth: true,
+                  symbol: 'circle'
+                }
+              ]
+            });
+
+            window.addEventListener('resize', () => chart.resize());
+          })
+          .catch(console.error);
+</script>
+
+
+</body>
+</html>

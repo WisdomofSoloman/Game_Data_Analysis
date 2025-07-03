@@ -44,6 +44,7 @@ public class DataController {
         return topPvEGamers;
     }
 
+
     @RequestMapping("getTop10PvpPlayers")
     public List<TopPvPGamers> getTop10PvpPlayers () {
         List<TopPvPGamers>  topPvPGamers = topPvPGamersMapper.selectList(null);
