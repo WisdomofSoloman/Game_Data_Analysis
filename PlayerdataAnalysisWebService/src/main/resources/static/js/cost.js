@@ -14,6 +14,7 @@
                 // 配置ECharts图表
                 const option = {
                     title: {
+                        left: '5%',
                         text: '零氪,小于三十,大于三十',
                     },
                     tooltip: {

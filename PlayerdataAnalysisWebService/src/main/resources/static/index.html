@@ -4,20 +4,34 @@
     <meta charset="UTF-8">
     <title>Title</title>
     <style>
-        #id0{
+        .header{
             width: 100%;
-            /*设置高*/
+            height: 100%;
+            text-align: center;
+            font-size: 2.5em;
+            line-height: 80px;
+            color: #351e1e;
+        }
+        #id0 {
+            width: 100%;
             height: 502px;
             overflow: auto;
             display: flex;
+            border-radius: 30px;
         }
-        #id1,#id3{
-            /*设置宽*/
-            width:50%;
-            /*设置高*/
+
+        #id1, #id3 {
+            width: 45%; /* 两个元素各占45%，加上gap刚好填满父容器 */
             height: 500px;
-            /*设置边框长度直线大小*/
             border: 1px solid brown;
+            background-color: aliceblue;
+            border-radius: 20px;
+        }
+        #id1{
+            margin-left: 3%;
+        }
+        #id3{
+            margin-left: 4%;
         }
         #id2{
             /*设置宽*/
@@ -25,7 +39,11 @@
             /*设置高*/
             height: 400px;
             /*设置边框长度直线大小*/
+            left: 3%;
             border: 1px solid brown;
+            background-color: aliceblue;
+            border-radius: 20px;
+            margin-top: 20px;
         }
         .table1 {
             text-align: center;
@@ -38,13 +56,16 @@
             border: 1px solid #bbc0ea; /* 为表头和单元格添加边框 */
             padding: 8px; /* 添加内边距，提升美观度 */
         }
-
+        body{
+            background-color: #bbc0ea;
+        }
     </style>
     <!--创建html页面,在页面中引入echarts的js库文件 -->
     <script src="js/echarts.min.js"></script>
     <script src="js/jquery.js"></script>
 <body>
 <!--准备一个具备大小的dom容器-->
+<div class="header">《野蛮时代》的玩家数据分析</div>
 <div id="id0">
     <div id="id1" >
         <table class="table1" style="width: 100%; border-collapse: collapse;">
@@ -79,7 +100,7 @@
 </div>
 <!--javaScript语言,写在标签script里面-->
 <!--<script src="js/test.js"></script>-->
-<hr>
+<!--<hr>-->
 <div id="id2"></div>
 <script src="js/topTenPveTable.js"></script>
 <script src="js/topTenPvpTable.js"></script>
