@@ -1,6 +1,7 @@
 package org.example.scala
 
 import org.apache.spark.sql.DataFrame
+import org.apache.spark.sql.functions.{avg, count, lit, round, sum}
 import org.example.scala.utils.SparkUtils
 
 object DataProcess {
@@ -162,12 +163,15 @@ object DataProcess {
     avePayDf.write.mode("append").jdbc(url,"ave_player_pay",porp)
 */
     val playerRaidsDf = spark.read.jdbc(url, "raids", porp)
-    playerRaidsDf.show()
     playerRaidsDf.createTempView("t_raids")
 
     val playerInfoDf = spark.read.jdbc(url,"players",porp)
-    playerInfoDf.show()
     playerInfoDf.createTempView("t_infos")
+
+    val playerCostDf = spark.read.jdbc(url,"cost",porp)
+    playerCostDf.createTempView("t_cost")
+    val i = playerCostDf.filter("paid = 0").count()
+    System.out.println(i)
 //pve排行前十玩家
     /*val pve_desc =
       """
@@ -194,7 +198,7 @@ object DataProcess {
     topGamerPvPDf.show()
     topGamerPvPDf.write.mode("append").jdbc(url,"top10_pvp_gamers",porp)*/
 
-    val total_battle =
+    /*val total_battle =
       """
         |select sum(pvp_battle_count) as total_pvp_count,
         |       round((sum(pvp_win_count) / sum(pvp_battle_count)) * 100, 1) as total_pvp_winrate,
@@ -204,6 +208,61 @@ object DataProcess {
         |""".stripMargin
     val totalWinRateDf : DataFrame = spark.sql(total_battle)
     totalWinRateDf.show()
-    totalWinRateDf.write.mode("append").jdbc(url,"total_win_rate",porp)
+    totalWinRateDf.write.mode("append").jdbc(url,"total_win_rate",porp)*/
+
+    //筛选表中玩家付费信息，建立新框架用于筛选
+    val t_user_sql =
+      """
+        |select t1.id,
+        |       t1.paid as player_cost,
+        |       pve_battle_count,
+        |       pve_win_count,
+        |       pvp_battle_count,
+        |       pvp_win_count,
+        |       (pve_battle_count + pvp_battle_count) as total_battle_count,
+        |       (pve_win_count + pvp_win_count) as total_win_count
+        |from t_cost t1,t_raids t2
+        |where t1.id = t2.id
+        |""".stripMargin
+    //筛出近7日未进行游戏动作玩家
+    val blanceDf : DataFrame = spark.sql(t_user_sql).filter("total_battle_count > 0")
+    //筛选0氪玩家
+    val t_df1 = blanceDf.filter("player_cost = 0")
+    //筛选氪金玩家
+    val t_df2 = blanceDf.filter("player_cost > 0")
+    //近7日玩家人均胜场以及胜率信息
+    val resultDf = t_df2.select(
+      lit("paid_players").as("player_type"),
+      count("id").as("players_count"),
+      sum("total_win_count").as("win_count"),
+      round((sum("total_win_count") / count("id"))) as("average_win_count") ,
+      round((sum("total_win_count") / sum("total_battle_count")) * 100, 1) as("win_rate")
+    ).union(t_df1.select(
+      lit("unpaid_players").as("player_type"),
+      count("id").as("players_count"),
+      sum("total_win_count").as("win_count"),
+      round((sum("total_win_count") / count("id"))) as("average_win_count") ,
+      round((sum("total_win_count") / sum("total_battle_count")) * 100, 1) as("win_rate")
+    ))
+    //resultDf.write.mode("append").jdbc(url,"balance",porp)
+
+    val type_player_sql =
+      """
+        |select t1.id,
+        |       avg_oltime as average_online_time,
+        |       pve_battle_count,
+        |       pvp_battle_count,
+        |       (pve_battle_count + pvp_battle_count) as total_battle_count,
+        |case   when pvp_battle_count > pve_battle_count then 'pvp'
+        |       else 'pve'
+        |end as player_type,
+        |case   when pvp_battle_count > pve_battle_count then round((pvp_battle_count / avg_oltime), 1)
+        |       else round((pve_battle_count / avg_oltime), 1)
+        |end as player_battle_pertime
+        |from t_infos t1,t_raids t2
+        |where t1.id = t2.id
+        |""".stripMargin
+    val t_typeDf : DataFrame = spark.sql(type_player_sql).filter("average_online_time > 0").filter("total_battle_count > 0")
+    t_typeDf.write.mode("append").jdbc(url,"player_type",porp)
   }
 }
