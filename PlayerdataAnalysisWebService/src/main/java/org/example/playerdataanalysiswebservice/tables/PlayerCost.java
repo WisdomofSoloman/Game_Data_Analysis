@@ -6,34 +6,37 @@ import com.baomidou.mybatisplus.annotation.TableName;
 
 @TableName("cost")
 public class PlayerCost {
+
     @TableId("id")
-    private int user_id;
+    private int userId;
+
     @TableField("paid")
-    private double pay_price;
+    private double payPrice;
+
     @TableField("pay_count")
-    private Integer pay_count;
+    private Integer payCount;
 
-    public int getPay_count() {
-        return pay_count;
+    public int getUserId() {
+        return userId;
     }
 
-    public void setPay_count(Integer pay_count) {
-        this.pay_count = pay_count;
+    public void setUserId(int userId) {
+        this.userId = userId;
     }
 
-    public int getUser_id() {
-        return user_id;
+    public double getPayPrice() {
+        return payPrice;
     }
 
-    public void setUser_id(Integer user_id) {
-        this.user_id = user_id;
+    public void setPayPrice(double payPrice) {
+        this.payPrice = payPrice;
     }
 
-    public double getPay_price() {
-        return pay_price;
+    public Integer getPayCount() {
+        return payCount;
     }
 
-    public void setPay_price(double pay_price) {
-        this.pay_price = pay_price;
+    public void setPayCount(Integer payCount) {
+        this.payCount = payCount;
     }
 }
