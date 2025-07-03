@@ -1,3 +1,4 @@
+//这只是个demo,不做具体渲染
 //初始化echart实例对象
 var myChart = echarts.init(document.getElementById("id1"));
 // 设置数据配置项
