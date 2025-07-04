@@ -6,8 +6,10 @@ import org.example.playerdataanalysiswebservice.mapper.*;
 import org.example.playerdataanalysiswebservice.tables.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.example.playerdataanalysiswebservice.dto.OverallWinRateDTO;
 
 import java.util.List;
 
@@ -69,4 +71,20 @@ public class DataController {
 
         return stats;
     }
+
+    @GetMapping("/getOverallWinRate")
+    public OverallWinRateDTO getOverallWinRate() {
+
+        // LIMIT 1 更省资源
+        TotalWinRate r = totalWinRateMapper.selectOne(
+                new QueryWrapper<TotalWinRate>().last("LIMIT 1"));
+
+        // 防空值保护
+        double pvpRate = r != null && r.getPvpWinRate() != null ? r.getPvpWinRate() : 0.0;
+        double pveRate = r != null && r.getPveWinRate() != null ? r.getPveWinRate() : 0.0;
+
+        return new OverallWinRateDTO(pvpRate, pveRate);
+    }
+
+
 }

@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>全服胜率</title>
+
+    <!-- ECharts CDN，也可换成本地 -->
+    <script src="js/echarts.min.js"></script>
+
+    <style>
+        body{margin:0;display:flex;justify-content:center;align-items:center;height:100vh}
+        #chart{width:60vw;height:75vh}
+    </style>
+</head>
+<body>
+<div id="chart"></div>
+
+<script>
+    /* === 1. 拉取后端数据 === */
+    fetch('/getTotalWinRate')                    // 同域部署；若前后端不同源就写完整 http://host:port/…
+        .then(res => res.json())
+        .then(list => {
+            console.log('接口返回原始数据', list);
+
+            /* === 2. 加权汇总 === */
+            let pvpTotal = 0, pvpWin = 0;
+            let pveTotal = 0, pveWin = 0;
+
+            list.forEach(r => {
+                // 字段名与实体类一致（MyBatis-Plus 转成 JSON 字段名）
+                const pvpCnt = Number(r.pvpCount       ?? r.total_pvp_count       ?? 0);
+                const pvpRt  = Number(r.pvpWinRate     ?? r.total_pvp_winrate     ?? 0);
+                const pveCnt = Number(r.pveCount       ?? r.total_pve_count       ?? 0);
+                const pveRt  = Number(r.pveWinRate     ?? r.total_pve_winrate     ?? 0);
+
+                pvpTotal += pvpCnt;
+                pvpWin   += pvpCnt * pvpRt / 100;
+                pveTotal += pveCnt;
+                pveWin   += pveCnt * pveRt / 100;
+            });
+
+            const pvpRate = pvpTotal ? +(pvpWin / pvpTotal * 100).toFixed(1) : 0;
+            const pveRate = pveTotal ? +(pveWin / pveTotal * 100).toFixed(1) : 0;
+
+            console.log(`汇总后 PVP=${pvpRate}%  PVE=${pveRate}%`);
+
+            /* === 3. 画图 === */
+            const chart = echarts.init(document.getElementById('chart'));
+
+            chart.setOption({
+                title:{ text:'全服 PVP / PVE 总胜率', left:'center' },
+                tooltip:{ formatter:p=>`${p.name}：${p.value}%` },
+                xAxis:{ type:'category', data:['PVP','PVE'] },
+                yAxis:{ type:'value', name:'胜率 (%)', min:0, max:100 },
+                series:[{
+                    type:'bar',
+                    data:[pvpRate, pveRate],
+                    itemStyle:{ borderRadius:6 },
+                    label:{ show:true, position:'top', formatter:'{c}%' }
+                }]
+            });
+
+            window.addEventListener('resize', () => chart.resize());
+        })
+        .catch(err => {
+            console.error('获取或绘制胜率数据失败：', err);
+            alert('获取胜率数据失败，详情请看控制台');
+        });
+</script>
+</body>
+</html>

@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>玩家类型分布（PVP vs PVE）</title>
+  <script src="js/echarts.min.js"></script>
+  <style>
+    body{margin:0;display:flex;justify-content:center;align-items:center;height:100vh}
+    #chart{width:60vw;height:75vh}
+  </style>
+</head>
+<body>
+<div id="chart"></div>
+
+<script>
+  /* 1. 拉取玩家战斗场次 */
+  fetch('/getRaids')                         // 同域部署；跨域写完整 URL
+          .then(r => r.json())
+          .then(rows => {
+            if (!Array.isArray(rows) || rows.length === 0) {
+              alert('没有拿到数据，请检查后端接口'); return;
+            }
+
+            /* 2. 分类计数 */
+            let pvpMajor = 0, pveMajor = 0;
+            rows.forEach(row => {
+              const pvp = Number(row.pvpCount ?? row.pvp_battle_count ?? 0);
+              const pve = Number(row.pveCount ?? row.pve_battle_count ?? 0);
+              if (pvp > pve) pvpMajor++; else pveMajor++;
+            });
+
+            console.table([
+              {类型:'PVP 主导',人数:pvpMajor},
+              {类型:'PVE 主导',人数:pveMajor}
+            ]);
+
+            /* 3. 画饼图 */
+            const chart = echarts.init(document.getElementById('chart'));
+            chart.setOption({
+              title:{ text:'玩家偏好分布', left:'center' },
+              tooltip:{ trigger:'item', formatter:'{b}<br/>人数：{c}（{d}%）' },
+              legend:{ top:30, left:'center' },
+              series:[{
+                type:'pie',
+                radius:['40%','65%'],
+                data:[
+                  { name:'PVP 主导', value:pvpMajor },
+                  { name:'PVE 主导', value:pveMajor }
+                ],
+                label:{ formatter:'{b}\n{d}%' },
+                itemStyle:{ borderRadius:6 }
+              }]
+            });
+            window.addEventListener('resize', () => chart.resize());
+          })
+          .catch(err=>{
+            console.error('拉取 / 处理数据失败：', err);
+            alert('接口调用失败，详情见控制台');
+          });
+</script>
+</body>
+</html>

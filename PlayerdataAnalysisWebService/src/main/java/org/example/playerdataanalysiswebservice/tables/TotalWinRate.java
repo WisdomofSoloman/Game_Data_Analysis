@@ -11,9 +11,6 @@ import com.baomidou.mybatisplus.annotation.TableName;
 @TableName("total_win_rate")
 public class TotalWinRate {
 
-    /* ---------- 主键（若无主键可删） ---------- */
-    @TableId(value = "user_id", type = IdType.AUTO)   // 假设以 user_id 作为自增主键
-    private Integer userId;
 
     /* ---------- PVP ---------- */
 
@@ -33,13 +30,7 @@ public class TotalWinRate {
 
     /* ---------- Getter / Setter ---------- */
 
-    public Integer getUserId() {
-        return userId;
-    }
 
-    public void setUserId(Integer userId) {
-        this.userId = userId;
-    }
 
     public Integer getPvpCount() {
         return pvpCount;
@@ -78,8 +69,7 @@ public class TotalWinRate {
     @Override
     public String toString() {
         return "TotalWinRate{" +
-                "userId=" + userId +
-                ", pvpCount=" + pvpCount +
+                "pvpCount=" + pvpCount +
                 ", pvpWinRate=" + pvpWinRate +
                 ", pveCount=" + pveCount +
                 ", pveWinRate=" + pveWinRate +
