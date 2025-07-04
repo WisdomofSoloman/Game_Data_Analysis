@@ -14,7 +14,7 @@
 
 <script>
   /* 1. 拉取玩家战斗场次 */
-  fetch('/getRaids')                         // 同域部署；跨域写完整 URL
+  fetch('/api/getRaids')                         // 同域部署；跨域写完整 URL
           .then(r => r.json())
           .then(rows => {
             if (!Array.isArray(rows) || rows.length === 0) {

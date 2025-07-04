@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>氪金 vs 不氪金 玩家对比</title>
+  <script src="js/echarts.min.js"></script>
+  <style>
+    body{margin:0;display:flex;justify-content:center;align-items:center;height:100vh}
+    #chart{width:90vw;height:85vh}
+  </style>
+</head>
+<body>
+<div id="chart"></div>
+
+<script>
+  fetch('http://localhost:8080/api/getBlanceinfo')
+          .then(r=>r.json())
+          .then(raw=>{
+            /* 拆分数据 */
+            const unpaid = raw.find(o=>o.type==='unpaid_players')||{};
+            const paid   = raw.find(o=>o.type==='paid_players')  ||{};
+
+            const names   = ['不氪金','氪金'];
+            const counts  = [unpaid.count,       paid.count      ];
+            const avgWins = [unpaid.avg_winCount,paid.avg_winCount];
+            const rates   = [unpaid.winRate,     paid.winRate    ];
+
+            /* 右轴上限：取 max(avgWins, rates) 再向上取整到 10 的倍数 */
+            const rightMax = Math.ceil(Math.max(...avgWins, ...rates) / 10) * 10;
+
+            const chart = echarts.init(document.getElementById('chart'));
+            chart.setOption({
+              title:{text:'氪金 vs 不氪金 玩家对比',left:'center'},
+              tooltip:{trigger:'axis',axisPointer:{type:'shadow'},
+                formatter:p=>{
+                  const i=p[0].dataIndex;
+                  return `${names[i]}<br/>
+                  玩家数：${counts[i].toLocaleString()}<br/>
+                  人均胜场：${avgWins[i]}<br/>
+                  胜率：${rates[i]}%`;
+                }},
+              legend:{top:35},
+              xAxis:{type:'category',data:names},
+              yAxis:[
+                {type:'value',name:'玩家数',min:0},
+                {type:'value',name:'人均胜场 / 胜率',min:0,max:rightMax,position:'right'}
+              ],
+              series:[
+                {name:'玩家数',   type:'bar', yAxisIndex:0, data:counts,  itemStyle:{borderRadius:4}},
+                {name:'人均胜场', type:'bar', yAxisIndex:1, data:avgWins, itemStyle:{borderRadius:4}},
+                {name:'胜率',     type:'line',yAxisIndex:1, data:rates,
+                  label:{show:true,position:'top',formatter:'{c}%'}}
+              ]
+            });
+            window.addEventListener('resize',()=>chart.resize());
+          })
+          .catch(e=>{
+            console.error(e);
+            alert('接口调用失败，请检查控制台');
+          });
+</script>
+</body>
+</html>

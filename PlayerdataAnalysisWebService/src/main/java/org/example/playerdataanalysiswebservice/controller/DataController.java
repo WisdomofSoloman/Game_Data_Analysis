@@ -62,14 +62,14 @@ public class DataController {
         List<PlayerRaids> raids = raidMapper.selectList(null);
         return raids;
     }
-    @RequestMapping("/api/getTop10PvePlayers")
+    @RequestMapping("/getTop10PvePlayers")
     public List<TopPvEGamers> getTop10PvePlayers () {
         List<TopPvEGamers>  topPvEGamers = topPvEGamersMapper.selectList(null);
         return topPvEGamers;
     }
 
 
-    @RequestMapping("/api/getTop10PvpPlayers")
+    @RequestMapping("/getTop10PvpPlayers")
     public List<TopPvPGamers> getTop10PvpPlayers () {
         List<TopPvPGamers>  topPvPGamers = topPvPGamersMapper.selectList(null);
         return topPvPGamers;

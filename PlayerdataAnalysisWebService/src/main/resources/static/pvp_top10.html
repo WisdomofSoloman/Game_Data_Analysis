@@ -14,7 +14,7 @@
 
 <script>
   /* === 1) 拉数据 === */
-  fetch('http://localhost:8080/getTop10PvpPlayers')
+  fetch('/getTop10PvpPlayers')
           .then(res => res.json())
           .then(list => {
             console.log(list);   // 调试用，确认字段

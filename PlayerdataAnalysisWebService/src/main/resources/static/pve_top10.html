@@ -13,7 +13,7 @@
 <div id="chart"></div>
 
 <script>
-  fetch('http://localhost:8080/getTop10PvePlayers')
+  fetch('/getTop10PvePlayers')
           .then(r => r.json())
           .then(list => {
             console.log(list);                     // 调试用

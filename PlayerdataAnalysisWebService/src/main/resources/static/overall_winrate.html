@@ -17,7 +17,7 @@
 
 <script>
     /* === 1. 拉取后端数据 === */
-    fetch('/getTotalWinRate')                    // 同域部署；若前后端不同源就写完整 http://host:port/…
+    fetch('/api/getTotalWinRate')                    // 同域部署；若前后端不同源就写完整 http://host:port/…
         .then(res => res.json())
         .then(list => {
             console.log('接口返回原始数据', list);

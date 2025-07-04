@@ -24,7 +24,7 @@
 <div id="gauge"></div>
 
 <script>
-    fetch('/getAvePlayerPay')
+    fetch('/api/getAvePlayerPay')
         .then(r => r.json())
         .then(data => {
             if(!data || data.playersCount==null){

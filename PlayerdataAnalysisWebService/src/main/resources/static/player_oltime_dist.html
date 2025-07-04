@@ -14,7 +14,7 @@
 
 <script>
   /* 1. 拉数据 */
-  fetch('/getPlayers')                             // 同源部署；若跨域换成完整 URL
+  fetch('/api/getPlayers')                             // 同源部署；若跨域换成完整 URL
           .then(r => r.json())
           .then(players => {
             if (!Array.isArray(players) || players.length === 0) {
