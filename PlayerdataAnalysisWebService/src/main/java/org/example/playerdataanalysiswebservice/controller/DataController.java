@@ -7,6 +7,7 @@ import org.example.playerdataanalysiswebservice.tables.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.example.playerdataanalysiswebservice.dto.OverallWinRateDTO;
@@ -28,32 +29,53 @@ public class DataController {
     @Autowired
     public TotalWinRateMapper totalWinRateMapper;
     @Autowired
-    private CostMapper playerCost;
+    public CostMapper playerCost;
+    @Autowired
+    public BalanceMapper balanceMapper;
+    @Autowired
+    public PlayerTypeMapper playerTypeMapper;
 
+    //根据ID查询玩家近期游玩状况，若不存在则为空
+    @RequestMapping("/api/getPlayers/{id}")
+    public PlayerType getPlayerType(@PathVariable("id") int p_id){
+        PlayerType player = playerTypeMapper.selectById(p_id);
+        if(player == null){
+            return null;
+        } else {
+            return player;
+        }
+    }
+    //查询付费/非付费玩家胜率情况
+    @RequestMapping("/api/getBlanceinfo")
+    public List<BlanceAnalysis> getBalanceInfo() {
+        List<BlanceAnalysis> info = balanceMapper.selectList(null );
+        return info;
+    }
 
-    @RequestMapping("getPlayers")
+    @RequestMapping("/api/getPlayers")
     public List<PlayerInfo> getAllPlayers () {
         return playerMapper.selectList(null );
     }
-    @RequestMapping("getRaids")
+
+    @RequestMapping("/api/getRaids")
     public List<PlayerRaids> getRaids () {
         List<PlayerRaids> raids = raidMapper.selectList(null);
         return raids;
     }
-    @RequestMapping("getTop10PvePlayers")
+    @RequestMapping("/api/getTop10PvePlayers")
     public List<TopPvEGamers> getTop10PvePlayers () {
         List<TopPvEGamers>  topPvEGamers = topPvEGamersMapper.selectList(null);
         return topPvEGamers;
     }
 
 
-    @RequestMapping("getTop10PvpPlayers")
+    @RequestMapping("/api/getTop10PvpPlayers")
     public List<TopPvPGamers> getTop10PvpPlayers () {
         List<TopPvPGamers>  topPvPGamers = topPvPGamersMapper.selectList(null);
         return topPvPGamers;
     }
 
-    @RequestMapping("getTotalWinRate")
+    @RequestMapping("/api/getTotalWinRate")
     public List<TotalWinRate> getTotalWinRate () {
         List<TotalWinRate> totalWinRate = totalWinRateMapper.selectList(null);
         return totalWinRate;
@@ -75,12 +97,11 @@ public class DataController {
     // －－ 注入 mapper
     @Autowired
     private AvePlayerPayMapper avePlayerPayMapper;
-    @RequestMapping("getAvePlayerPay")
+    @RequestMapping("/api/getAvePlayerPay")
     public AvePlayerPay getAvePlayerPay() {
         // LIMIT 1 保守处理：若以后有多行只取第一行
         return avePlayerPayMapper.selectOne(null);
     }
-
 
 
 }
