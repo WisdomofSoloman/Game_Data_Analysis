@@ -72,19 +72,15 @@ public class DataController {
         return stats;
     }
 
-    @GetMapping("/getOverallWinRate")
-    public OverallWinRateDTO getOverallWinRate() {
-
-        // LIMIT 1 更省资源
-        TotalWinRate r = totalWinRateMapper.selectOne(
-                new QueryWrapper<TotalWinRate>().last("LIMIT 1"));
-
-        // 防空值保护
-        double pvpRate = r != null && r.getPvpWinRate() != null ? r.getPvpWinRate() : 0.0;
-        double pveRate = r != null && r.getPveWinRate() != null ? r.getPveWinRate() : 0.0;
-
-        return new OverallWinRateDTO(pvpRate, pveRate);
+    // －－ 注入 mapper
+    @Autowired
+    private AvePlayerPayMapper avePlayerPayMapper;
+    @RequestMapping("getAvePlayerPay")
+    public AvePlayerPay getAvePlayerPay() {
+        // LIMIT 1 保守处理：若以后有多行只取第一行
+        return avePlayerPayMapper.selectOne(null);
     }
+
 
 
 }
