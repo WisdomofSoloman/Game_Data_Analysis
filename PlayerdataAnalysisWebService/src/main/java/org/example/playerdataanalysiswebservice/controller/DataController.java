@@ -6,9 +6,10 @@ import org.example.playerdataanalysiswebservice.mapper.*;
 import org.example.playerdataanalysiswebservice.tables.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.example.playerdataanalysiswebservice.dto.OverallWinRateDTO;
 
 import java.util.List;
 
@@ -27,41 +28,34 @@ public class DataController {
     @Autowired
     public TotalWinRateMapper totalWinRateMapper;
     @Autowired
-    public ResMapper resMapper;
-    @Autowired
     private CostMapper playerCost;
 
-    @RequestMapping("/api/getOneRes")
-    public PlayerRes getOneRes()
-    {
-        PlayerRes playerRes = resMapper.selectOne(new QueryWrapper<PlayerRes>().eq("id", 15824));
-        return playerRes;
-    }
 
-    @RequestMapping("/api/getPlayers")
+    @RequestMapping("getPlayers")
     public List<PlayerInfo> getAllPlayers () {
         return playerMapper.selectList(null );
     }
-    @RequestMapping("/api/getRaids")
+    @RequestMapping("getRaids")
     public List<PlayerRaids> getRaids () {
         List<PlayerRaids> raids = raidMapper.selectList(null);
         return raids;
     }
-    @RequestMapping("/api/getTop10PvePlayers")
+    @RequestMapping("getTop10PvePlayers")
     public List<TopPvEGamers> getTop10PvePlayers () {
         List<TopPvEGamers>  topPvEGamers = topPvEGamersMapper.selectList(null);
         return topPvEGamers;
     }
 
-    @RequestMapping("/api/getTop10PvpPlayers")
+
+    @RequestMapping("getTop10PvpPlayers")
     public List<TopPvPGamers> getTop10PvpPlayers () {
         List<TopPvPGamers>  topPvPGamers = topPvPGamersMapper.selectList(null);
         return topPvPGamers;
     }
 
-    @RequestMapping("/api/getTotalWinRate")
-    public TotalWinRate getTotalWinRate () {
-        TotalWinRate totalWinRate = totalWinRateMapper.selectOne(null);
+    @RequestMapping("getTotalWinRate")
+    public List<TotalWinRate> getTotalWinRate () {
+        List<TotalWinRate> totalWinRate = totalWinRateMapper.selectList(null);
         return totalWinRate;
     }
 
@@ -77,4 +71,16 @@ public class DataController {
 
         return stats;
     }
+
+    // －－ 注入 mapper
+    @Autowired
+    private AvePlayerPayMapper avePlayerPayMapper;
+    @RequestMapping("getAvePlayerPay")
+    public AvePlayerPay getAvePlayerPay() {
+        // LIMIT 1 保守处理：若以后有多行只取第一行
+        return avePlayerPayMapper.selectOne(null);
+    }
+
+
+
 }

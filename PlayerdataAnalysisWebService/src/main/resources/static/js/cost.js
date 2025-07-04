@@ -1,4 +1,3 @@
-//这只是个demo,不做具体渲染
 // 使用立即执行函数实现代码隔离
 (function() {
     // 初始化ECharts实例
@@ -15,6 +14,7 @@
                 // 配置ECharts图表
                 const option = {
                     title: {
+                        left: '5%',
                         text: '零氪,小于三十,大于三十',
                     },
                     tooltip: {

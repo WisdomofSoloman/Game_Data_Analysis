@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>全服付费概览</title>
+    <script src="js/echarts.min.js"></script>
+    <style>
+        body{margin:0;font-family:"Segoe UI",Helvetica,Arial,sans-serif;display:flex;flex-direction:column;align-items:center}
+        #panel{display:flex;gap:2rem;margin-top:1.5rem}
+        .card{background:#f7f9fc;border-radius:8px;box-shadow:0 2px 6px rgba(0,0,0,.1);padding:1rem 2rem;text-align:center}
+        .card h2{margin:0;font-size:1.2rem;color:#555}
+        .card p{margin:.4rem 0 0;font-size:1.8rem;font-weight:bold;color:#333}
+        #gauge{width:50vw;height:60vh;margin-top:1rem}
+    </style>
+</head>
+<body>
+<h1>全服付费概览</h1>
+
+<div id="panel">
+    <div class="card"><h2>玩家总数</h2><p id="totalPlayer">--</p></div>
+    <div class="card"><h2>总付费金额</h2><p id="totalPaid">--</p></div>
+</div>
+
+<div id="gauge"></div>
+
+<script>
+    fetch('/getAvePlayerPay')
+        .then(r => r.json())
+        .then(data => {
+            if(!data || data.playersCount==null){
+                alert('接口返回为空，请检查后端'); return;
+            }
+
+            /* 数字卡片填值，千位分隔符 & 保留 2 位小数 */
+            const fmtInt   = n => n.toLocaleString();
+            const fmtMoney = n => n.toLocaleString(undefined,{maximumFractionDigits:2});
+
+            document.getElementById('totalPlayer').textContent = fmtInt(data.playersCount);
+            document.getElementById('totalPaid').textContent   = fmtMoney(data.playersPaid);
+
+            const avg = Number(data.playerAveragePaid ?? 0);
+
+            /* 仪表盘：人均付费 */
+            /* 仪表盘：人均付费 */
+            const gauge = echarts.init(document.getElementById('gauge'));
+
+            gauge.setOption({
+                tooltip:{ formatter:'人均付费：{c}' },
+                series:[{
+                    type:'gauge',
+                    startAngle:210, endAngle:-30,
+                    min:0, max:Math.max(avg*2,1),
+                    splitNumber:5,
+
+                    axisLine:{ lineStyle:{ width:15 } },
+
+                    axisLabel:{ formatter:v=>v.toFixed(2) },
+                   
+                    axisTick:{ length:6, lineStyle:{ color:'#999' } },
+                    splitLine:{ length:12, lineStyle:{ color:'#ccc' } },
+
+                    pointer:{ width:6 },
+                    title:{ fontSize:18, offsetCenter:[0,'80%'], color:'#666' },
+                    detail:{
+                        valueAnimation:true,
+                        fontSize:36,
+                        offsetCenter:[0,'40%'],
+                        formatter: '{value}'   // 中央数字只显示人均付费
+                    },
+                    data:[{ value:+avg.toFixed(2), name:'人均付费' }]
+                }]
+            });
+
+            window.addEventListener('resize',()=>gauge.resize());
+        })
+        .catch(err=>{
+            console.error('拉取付费概览失败：',err);
+            alert('接口调用失败，请检查控制台');
+        });
+</script>
+</body>
+</html>

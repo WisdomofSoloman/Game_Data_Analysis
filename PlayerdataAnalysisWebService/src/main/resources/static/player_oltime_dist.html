@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>玩家在线时长分布</title>
+  <script src="js/echarts.min.js"></script>
+  <style>
+    body { margin:0; display:flex; justify-content:center; align-items:center; height:100vh; }
+    #chart { width:80vw; height:80vh; }
+  </style>
+</head>
+<body>
+<div id="chart"></div>
+
+<script>
+  /* 1. 拉数据 */
+  fetch('/getPlayers')                             // 同源部署；若跨域换成完整 URL
+          .then(r => r.json())
+          .then(players => {
+            if (!Array.isArray(players) || players.length === 0) {
+              alert('接口返回为空，无法绘制'); return;
+            }
+
+            /* 2. 定义分桶区间（可按需调整） */
+            const buckets = [
+              { name:'<10h',          min:  0, max: 10 },
+              { name:'10‒50h',        min: 10, max: 50 },
+              { name:'50‒100h',       min: 50, max:100 },
+              { name:'100‒200h',      min:100, max:200 },
+              { name:'200‒500h',      min:200, max:500 },
+              { name:'>500h',         min:500, max:Infinity }
+            ];
+
+            /* 3. 初始化计数器 */
+            const counts = Array(buckets.length).fill(0);
+
+            /* 4. 遍历玩家在线时长 → 计数 */
+            players.forEach(p => {
+              const t = Number(p.averageOnlineTime ?? 0);
+              for (let i = 0; i < buckets.length; i++) {
+                if (t >= buckets[i].min && t < buckets[i].max) {
+                  counts[i]++; break;
+                }
+              }
+            });
+
+            /* 5. 计算占比（可选） */
+            const total = players.length;
+            const perc  = counts.map(c => +(c/total*100).toFixed(1));
+
+            console.table(buckets.map((b,i)=>({区间:b.name,人数:counts[i],百分比:perc[i]+'%'})));
+
+            /* 6. 画图 */
+            const chart = echarts.init(document.getElementById('chart'));
+            chart.setOption({
+              title:{ text:'玩家平均在线时长分布', left:'center' },
+              tooltip:{ trigger:'axis',
+                formatter:p=>`${p[0].name}<br/>人数：${counts[p[0].dataIndex]} (${perc[p[0].dataIndex]}%)` },
+              xAxis:{ type:'category', data:buckets.map(b=>b.name), axisLabel:{ rotate:30 } },
+              yAxis:{ type:'value', name:'玩家人数' },
+              series:[{
+                type:'bar',
+                data: counts,
+                itemStyle:{ borderRadius:4 },
+                label:{ show:true, position:'top' }
+              }]
+            });
+            window.addEventListener('resize', () => chart.resize());
+          })
+          .catch(err => {
+            console.error('获取玩家数据失败：', err);
+            alert('接口调用失败，请查看控制台');
+          });
+</script>
+</body>
+</html>

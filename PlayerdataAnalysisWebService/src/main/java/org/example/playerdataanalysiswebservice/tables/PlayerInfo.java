@@ -3,22 +3,32 @@ package org.example.playerdataanalysiswebservice.tables;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import org.w3c.dom.Text;
 
+/**
+ * 玩家信息表映射（players）
+ */
 @TableName("players")
 public class PlayerInfo {
-    @TableId
-    private int id;
+
+    /** 主键——玩家 ID */
+    @TableId("id")               // 明确数据库列名，避免默认命名策略冲突
+    private Integer id;
+
+    /** 注册时间（players.reg_time） */
     @TableField("reg_time")
     private String registerTime;
-    @TableField("avg_oltime")
-    private double averageOnlineTime;
 
-    public int getId() {
+    /** 平均在线时长（players.avg_oltime，单位：小时） */
+    @TableField("avg_oltime")
+    private Double averageOnlineTime;
+
+    /* ---------- Getter / Setter ---------- */
+
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -30,19 +40,22 @@ public class PlayerInfo {
         this.registerTime = registerTime;
     }
 
-    public double getAverageOnlineTime() {
+    public Double getAverageOnlineTime() {
         return averageOnlineTime;
     }
 
-    public void setAverageOnlineTime(double averageOnlineTime) {
+    public void setAverageOnlineTime(Double averageOnlineTime) {
         this.averageOnlineTime = averageOnlineTime;
     }
 
+    /* ---------- toString ---------- */
+
     @Override
     public String toString() {
-        return "Player{ id: "  + id
-                + ", 注册日期: "  + registerTime
-                + ", 平均在线时长: "  + averageOnlineTime
-                + "}\n";
+        return "PlayerInfo{" +
+                "id=" + id +
+                ", registerTime='" + registerTime + '\'' +
+                ", averageOnlineTime=" + averageOnlineTime +
+                '}';
     }
 }
