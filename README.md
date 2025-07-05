@@ -5,7 +5,7 @@
 本项目技术栈为:Java,JavaScript,ajax,mybatis-plus,mysql,spark.
 通过路径为D:\train-vacation\Final-result\Game_Data_Analysis\PlayerdataAnalysisWebService\src\main\java\org\example\playerdataanalysiswebservice下的PlayerdataAnalysisWebServiceApplication.java文件来运行本代码.
 
-实现的功能如下:
+/*实现的功能如下:*/
 1.主题页面和功能实现的索引
 2.玩家人均消费
 3.总体胜率pve,pvp
