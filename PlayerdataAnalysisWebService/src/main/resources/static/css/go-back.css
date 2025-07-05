@@ -1,0 +1,27 @@
+.goback {
+    position: fixed;
+    top: 30px;
+    left: 50px;
+    border-radius: 20px;
+    font-size: 18px; /* 增大字体大小 */
+    text-align: center;
+    background-color: #5a6ebf;
+    width: 120px;
+    height: 60px;
+    line-height: 60px; /* 与 height 一致，实现垂直居中 */
+    color: white;
+    margin: 10px 0;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    cursor: pointer; /* 添加手型光标，提升交互感 */
+    transition: all 0.3s ease; /* 添加过渡效果 */
+}
+
+/* 鼠标悬停效果 */
+.goback:hover {
+    background-color: #4a5da8; /* 加深背景色 */
+    transform: translateY(-2px); /* 上移 */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* 加深阴影 */
+}

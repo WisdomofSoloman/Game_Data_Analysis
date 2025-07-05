@@ -3,6 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <title>玩家在线时长分布</title>
+  <script src="js/jquery.js"></script> <!-- 引入 jQuery,必须在其他的前面引入才可以 -->
+  <link rel="stylesheet" href="css/go-back.css">
   <script src="js/echarts.min.js"></script>
   <style>
     body { margin:0; display:flex; justify-content:center; align-items:center; height:100vh; }
@@ -10,6 +12,7 @@
   </style>
 </head>
 <body>
+<div class="goback">返回主页</div>
 <div id="chart"></div>
 
 <script>
@@ -72,5 +75,6 @@
             alert('接口调用失败，请查看控制台');
           });
 </script>
+<script src="js/go-back.js"></script>
 </body>
 </html>

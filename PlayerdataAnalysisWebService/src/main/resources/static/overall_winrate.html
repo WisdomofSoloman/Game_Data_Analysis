@@ -3,18 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <title>全服胜率</title>
-
+    <script src="js/jquery.js"></script> <!-- 引入 jQuery,必须在其他的前面引入才可以 -->
+    <link rel="stylesheet" href="css/go-back.css">
     <!-- ECharts CDN，也可换成本地 -->
     <script src="js/echarts.min.js"></script>
-
     <style>
         body{margin:0;display:flex;justify-content:center;align-items:center;height:100vh}
         #chart{width:60vw;height:75vh}
     </style>
 </head>
 <body>
+<div class="goback">返回主页</div>
 <div id="chart"></div>
-
 <script>
     /* === 1. 拉取后端数据 === */
     fetch('/api/getTotalWinRate')                    // 同域部署；若前后端不同源就写完整 http://host:port/…
@@ -67,5 +67,6 @@
             alert('获取胜率数据失败，详情请看控制台');
         });
 </script>
+<script src="js/go-back.js"></script>
 </body>
 </html>

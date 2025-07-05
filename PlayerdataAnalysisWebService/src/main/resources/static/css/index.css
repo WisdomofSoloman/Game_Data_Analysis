@@ -1,0 +1,135 @@
+/* 页头样式 */
+.header {
+    text-align: center;
+    font-size: 2.2em;
+    font-weight: bold;
+    color: #351e1e;
+    margin: 20px 0 30px;
+    text-shadow: 0 2px 4px rgba(255, 255, 255, 0.8);
+}
+
+/* 主容器样式 */
+#id0 {
+    width: 100%;
+    min-height: 550px;
+    overflow: auto;
+    display: flex;
+    gap: 2%; /* 使用gap代替margin控制间距 */
+    margin-bottom: 30px;
+    padding: 15px;
+}
+
+/* 表格容器样式 */
+#id1, #id3 {
+    flex: 1; /* 自动分配宽度，适应不同屏幕 */
+    min-width: 300px; /* 最小宽度，避免过窄 */
+    height: 550px;
+    border: 1px solid brown;
+    background-color: rgba(240, 248, 255, 0.9); /* 半透明背景，提升可读性 */
+    border-radius: 20px;
+    padding: 15px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+#id2 {
+    width: 98%;
+    height: 500px;
+    margin: 0 auto;
+    border: 1px solid brown;
+    background-color: rgba(240, 248, 255, 0.9);
+    border-radius: 20px;
+    padding: 15px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    /*Flex 布局，使子元素均匀分布 */
+    display: flex;
+    gap: 1.5%; /* 子元素之间的间距 */
+}
+
+#id4, #id5, #id6 {
+    flex: 1; /* 三个元素平均分配父容器宽度 */
+    height: 100%; /* 占满父容器高度 */
+    border: 1px solid #8b4513; /* 可选：添加边框区分区域 */
+    border-radius: 15px;
+    padding: 10px;
+    background-color: rgba(255, 255, 255, 0.7); /* 可选：子容器背景 */
+}
+#id6 {
+    display: flex;
+    flex-direction: column; /* 垂直排列 */
+    justify-content: space-around; /* 纵向均匀分布 */
+    align-items: center; /* 水平居中 */
+}
+
+.table1, .table2 {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: center;
+    vertical-align: middle;
+    height: calc(100% - 40px); /* 自适应容器高度 */
+    cursor: pointer; /* 添加手型光标，提升交互感 */
+}
+
+.table1 caption, .table2 caption {
+    font-size: 1.2em;
+    font-weight: bold;
+    margin-bottom: 15px;
+    color: #5d4037;
+    text-align: center;
+}
+
+.table1 th, .table1 td,
+.table2 th, .table2 td {
+    border: 1px solid #bbc0ea;
+    padding: 10px 8px;
+    white-space: nowrap; /* 防止内容换行 */
+}
+
+.table1 th, .table2 th {
+    background-color: blanchedalmond;
+    font-weight: bold;
+}
+
+.table1 tr:hover, .table2 tr:hover {
+    background-color: rgba(255, 255, 255, 0.7); /* 行悬停效果 */
+}
+.index1,.index2,.index3,.index4{
+    font-size: 20px; /* 设置明确的字体大小 */
+    text-align: center;
+    background-color: #5a6ebf;
+    width: 80%; /* 响应式宽度，适应不同屏幕 */
+    height: 80px;
+    line-height: 80px; /* 与 height 一致，实现垂直居中 */
+    border-radius: 20px;
+    color: white; /* 文字颜色 */
+    margin: 10px 0; /* 上下间距 */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    white-space: nowrap; /* 防止文字换行 */
+    overflow: hidden; /* 超出部分隐藏 */
+    text-overflow: ellipsis; /* 超出部分显示省略号 */
+    cursor: pointer; /* 添加手型光标，提升交互感 */
+}
+/* 鼠标悬停效果 */
+.index1:hover,.index2:hover,.index3:hover,.index4:hover {
+    background-color: #4a5da8; /* 加深背景色 */
+    transform: translateY(-2px); /* 上移 */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* 加深阴影 */
+}
+
+/* 响应式调整 - 小屏幕适配 */
+@media (max-width: 768px) {
+    #id0 {
+        flex-direction: column; /* 垂直排列 */
+        gap: 20px;
+        height: auto;
+    }
+
+    #id1, #id3, #id2 {
+        height: auto;
+        min-height: 400px;
+    }
+
+    .header {
+        font-size: 1.8em;
+        margin: 10px 0 20px;
+    }
+}

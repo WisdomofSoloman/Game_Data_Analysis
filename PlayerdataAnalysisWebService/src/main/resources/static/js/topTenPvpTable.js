@@ -36,7 +36,7 @@
             alert("数据加载失败，请检查网络连接或刷新页面");
         }
     });
-    $('.table1').click(function() {
+    $('.table2').click(function() {
         console.log('点击事件触发！');
         window.location.href = "../pvp_top10.html";
     });
