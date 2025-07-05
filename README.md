@@ -6,8 +6,12 @@
 通过路径为D:\train-vacation\Final-result\Game_Data_Analysis\PlayerdataAnalysisWebService\src\main\java\org\example\playerdataanalysiswebservice下的PlayerdataAnalysisWebServiceApplication.java文件来运行本代码.
 
 实现的功能如下:
-1.
-2.
-3.
-4.
-5.
+1.主题页面和功能实现的索引
+2.玩家人均消费
+3.总体胜率pve,pvp
+4.均金非氪金胜率对比
+5.玩家家在线时长分布
+6.前十pve(详细分析)
+7.前十pvp(详细分析)
+8.玩家类型分布pvp,pve
+ps:实训里面布置了实现地图设计的作业,在文件里面我们顺手完成了,但是要自己找,没有做跳转.
