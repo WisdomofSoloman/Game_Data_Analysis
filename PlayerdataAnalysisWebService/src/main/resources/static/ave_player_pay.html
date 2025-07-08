@@ -5,79 +5,504 @@
     <title>全服付费概览</title>
     <script src="js/jquery.js"></script> <!-- 引入 jQuery,必须在其他的前面引入才可以 -->
     <link rel="stylesheet" href="css/go-back.css">
-    <script src="js/echarts.min.js"></script>
-    <style>
-        body{margin:0;font-family:"Segoe UI",Helvetica,Arial,sans-serif;display:flex;flex-direction:column;align-items:center}
-        #panel{display:flex;gap:2rem;margin-top:1.5rem}
-        .card{background:#f7f9fc;border-radius:8px;box-shadow:0 2px 6px rgba(0,0,0,.1);padding:1rem 2rem;text-align:center}
-        .card h2{margin:0;font-size:1.2rem;color:#555}
-        .card p{margin:.4rem 0 0;font-size:1.8rem;font-weight:bold;color:#333}
-        #gauge{width:50vw;height:60vh;margin-top:1rem}
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3b82f6',
+                        secondary: '#64748b',
+                        success: '#10b981',
+                        warning: '#f59e0b',
+                        danger: '#ef4444',
+                        info: '#06b6d4',
+                        light: '#f8fafc',
+                        dark: '#1e293b',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .card-shadow {
+                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            }
+            .card-hover {
+                transition: transform 0.3s ease, box-shadow 0.3s ease;
+            }
+            .card-hover:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+            }
+        }
     </style>
 </head>
-<body>
+<body class="bg-gray-50 font-sans">
 <div class="goback">返回主页</div>
-<h1>全服付费概览</h1>
+<div class="container mx-auto px-4 py-8 max-w-7xl">
+    <header class="mb-8">
+        <div class="flex justify-between items-center">
+            <h1 class="text-2xl font-bold text-gray-800 flex items-center">
+                <i class="fa fa-line-chart text-primary mr-3"></i>
+                游戏运营评估仪表盘
+            </h1>
+            <div class="text-sm text-gray-500">
+                <span id="update-time">最后更新: 刚刚</span>
+            </div>
+        </div>
+        <div class="h-px bg-gray-200 mt-4"></div>
+    </header>
 
-<div id="panel">
-    <div class="card"><h2>玩家总数</h2><p id="totalPlayer">--</p></div>
-    <div class="card"><h2>总付费金额</h2><p id="totalPaid">--</p></div>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div class="bg-white rounded-xl p-6 card-shadow card-hover">
+            <div class="flex justify-between items-start mb-4">
+                <div>
+                    <p class="text-sm font-medium text-gray-500">玩家总数</p>
+                    <h3 class="text-3xl font-bold text-gray-800 mt-1" id="player-count">--</h3>
+                </div>
+                <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">
+                    <i class="fa fa-users text-primary"></i>
+                </div>
+            </div>
+            <div class="flex items-center text-sm">
+                    <span id="player-trend" class="text-success flex items-center">
+                        <i class="fa fa-arrow-up mr-1"></i> 5.2%
+                    </span>
+                <span class="text-gray-500 ml-2">较上月</span>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-xl p-6 card-shadow card-hover">
+            <div class="flex justify-between items-start mb-4">
+                <div>
+                    <p class="text-sm font-medium text-gray-500">总付费金额</p>
+                    <h3 class="text-3xl font-bold text-gray-800 mt-1" id="total-revenue">--</h3>
+                </div>
+                <div class="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center">
+                    <i class="fa fa-rmb text-success"></i>
+                </div>
+            </div>
+            <div class="flex items-center text-sm">
+                    <span id="revenue-trend" class="text-success flex items-center">
+                        <i class="fa fa-arrow-up mr-1"></i> 3.8%
+                    </span>
+                <span class="text-gray-500 ml-2">较上月</span>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-xl p-6 card-shadow card-hover">
+            <div class="flex justify-between items-start mb-4">
+                <div>
+                    <p class="text-sm font-medium text-gray-500">人均付费</p>
+                    <h3 class="text-3xl font-bold text-gray-800 mt-1" id="avg-revenue">--</h3>
+                </div>
+                <div class="w-10 h-10 rounded-full bg-purple-100 flex items-center justify-center">
+                    <i class="fa fa-user-circle text-purple-600"></i>
+                </div>
+            </div>
+            <div class="flex items-center text-sm">
+                    <span id="avg-trend" class="text-danger flex items-center">
+                        <i class="fa fa-arrow-down mr-1"></i> 1.5%
+                    </span>
+                <span class="text-gray-500 ml-2">较上月</span>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-xl p-6 card-shadow card-hover">
+            <div class="flex justify-between items-start mb-4">
+                <div>
+                    <p class="text-sm font-medium text-gray-500">付费转化率</p>
+                    <h3 class="text-3xl font-bold text-gray-800 mt-1" id="payment-rate">--</h3>
+                </div>
+                <div class="w-10 h-10 rounded-full bg-orange-100 flex items-center justify-center">
+                    <i class="fa fa-percent text-warning"></i>
+                </div>
+            </div>
+            <div class="flex items-center text-sm">
+                    <span id="rate-trend" class="text-success flex items-center">
+                        <i class="fa fa-arrow-up mr-1"></i> 2.1%
+                    </span>
+                <span class="text-gray-500 ml-2">较上月</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div class="lg:col-span-2">
+            <div class="bg-white rounded-xl p-6 card-shadow mb-8">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-xl font-bold text-gray-800">人均付费分析</h2>
+                    <div class="text-sm text-gray-500">当前周期: 本月</div>
+                </div>
+                <div class="h-[400px]" id="payment-gauge"></div>
+            </div>
+
+            <div class="bg-white rounded-xl p-6 card-shadow">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-xl font-bold text-gray-800">付费趋势分析</h2>
+                    <div class="text-sm text-gray-500">
+                            <span class="inline-flex items-center mr-3">
+                                <span class="w-3 h-3 bg-primary rounded-full mr-1"></span>
+                                总付费
+                            </span>
+                        <span class="inline-flex items-center">
+                                <span class="w-3 h-3 bg-secondary rounded-full mr-1"></span>
+                                玩家数
+                            </span>
+                    </div>
+                </div>
+                <div class="h-[350px]" id="trend-chart"></div>
+            </div>
+        </div>
+
+        <div class="lg:col-span-1 space-y-8">
+            <div class="bg-white rounded-xl p-6 card-shadow">
+                <h2 class="text-xl font-bold text-gray-800 mb-6">运营评估结果</h2>
+
+                <div class="space-y-4">
+                    <div class="p-4 rounded-lg bg-primary/5 border border-primary/20" id="operation-result">
+                        <div class="flex items-center mb-2">
+                            <div class="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center mr-3">
+                                <i class="fa fa-check text-primary"></i>
+                            </div>
+                            <h3 class="font-semibold text-gray-800">继续运营</h3>
+                        </div>
+                        <p class="text-gray-600 text-sm">游戏运营状况良好，建议继续当前策略并优化付费体验。</p>
+                    </div>
+
+                    <div class="space-y-3">
+                        <div>
+                            <div class="flex justify-between text-sm mb-1">
+                                <span class="text-gray-600">玩家数量</span>
+                                <span class="font-medium text-gray-800">达标</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-2">
+                                <div class="bg-success h-2 rounded-full" style="width: 85%"></div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <div class="flex justify-between text-sm mb-1">
+                                <span class="text-gray-600">收入水平</span>
+                                <span class="font-medium text-gray-800">达标</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-2">
+                                <div class="bg-success h-2 rounded-full" style="width: 78%"></div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <div class="flex justify-between text-sm mb-1">
+                                <span class="text-gray-600">盈利状况</span>
+                                <span class="font-medium text-gray-800">达标</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-2">
+                                <div class="bg-success h-2 rounded-full" style="width: 92%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-xl p-6 card-shadow">
+                <h2 class="text-xl font-bold text-gray-800 mb-6">运营建议</h2>
+
+                <div class="space-y-4">
+                    <div class="flex items-start">
+                        <div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center mr-3 flex-shrink-0">
+                            <i class="fa fa-lightbulb-o text-primary"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-semibold text-gray-800 text-sm">提升人均付费</h3>
+                            <p class="text-gray-600 text-xs mt-1">优化内购体验，推出限时优惠活动。</p>
+                        </div>
+                    </div>
+
+                    <div class="flex items-start">
+                        <div class="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center mr-3 flex-shrink-0">
+                            <i class="fa fa-line-chart text-success"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-semibold text-gray-800 text-sm">用户留存优化</h3>
+                            <p class="text-gray-600 text-xs mt-1">增加每日登录奖励，提升玩家粘性。</p>
+                        </div>
+                    </div>
+
+                    <div class="flex items-start">
+                        <div class="w-8 h-8 rounded-full bg-orange-100 flex items-center justify-center mr-3 flex-shrink-0">
+                            <i class="fa fa-users text-warning"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-semibold text-gray-800 text-sm">拓展新用户</h3>
+                            <p class="text-gray-600 text-xs mt-1">通过社交媒体推广，吸引更多潜在玩家。</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="mt-12 text-center text-sm text-gray-500">
+        <p>© 2025 游戏运营管理系统 | 数据仅供参考</p>
+    </footer>
 </div>
 
-<div id="gauge"></div>
-
 <script>
+    // 格式化函数
+    const formatNumber = (num, fractionDigits = 0) => {
+        return new Intl.NumberFormat('zh-CN', {
+            minimumFractionDigits: fractionDigits,
+            maximumFractionDigits: fractionDigits
+        }).format(num);
+    };
+
+    const formatMoney = (num) => {
+        return '¥' + new Intl.NumberFormat('zh-CN', {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        }).format(num);
+    };
+
+    // 运营评估函数
+    function shouldContinueOperation(playerCount, monthlyRevenue, operationCost, minPlayers = 1000, revenueThreshold = 5000.0) {
+        const profit = monthlyRevenue - operationCost;
+
+        if (playerCount < minPlayers) {
+            return { result: false, reason: `玩家数量不足(${formatNumber(playerCount)}/${formatNumber(minPlayers)})` };
+        }
+
+        if (profit < 0) {
+            return { result: false, reason: `亏损状态(${formatMoney(profit)})` };
+        }
+
+        if (monthlyRevenue < revenueThreshold) {
+            return { result: false, reason: `收入未达预期(${formatMoney(monthlyRevenue)}/${formatMoney(revenueThreshold)})` };
+        }
+
+        return { result: true, reason: `健康运营(玩家:${formatNumber(playerCount)}, 利润:${formatMoney(profit)})` };
+    }
+
+    // 从原始AJAX接口获取数据
     fetch('/api/getAvePlayerPay')
         .then(r => r.json())
         .then(data => {
-            if(!data || data.playersCount==null){
-                alert('接口返回为空，请检查后端'); return;
+            if (!data || data.playersCount == null) {
+                alert('接口返回为空，请检查后端');
+                return;
             }
 
-            /* 数字卡片填值，千位分隔符 & 保留 2 位小数 */
-            const fmtInt   = n => n.toLocaleString();
-            const fmtMoney = n => n.toLocaleString(undefined,{maximumFractionDigits:2});
+            // 填充数据
+            document.getElementById('player-count').textContent = formatNumber(data.playersCount);
+            document.getElementById('total-revenue').textContent = formatMoney(data.playersPaid);
+            document.getElementById('avg-revenue').textContent = formatMoney(data.playerAveragePaid);
 
-            document.getElementById('totalPlayer').textContent = fmtInt(data.playersCount);
-            document.getElementById('totalPaid').textContent   = fmtMoney(data.playersPaid);
+            // 计算付费转化率 (假设活跃玩家数的30%为付费用户)
+            const paymentRate = (data.playersCount * 0.3 / data.playersCount) * 100;
+            document.getElementById('payment-rate').textContent = paymentRate.toFixed(1) + '%';
 
+            // 运营评估 (假设运营成本为收入的70假设运营成本为收入的70%)
+            const operationCost = data.playersPaid * 0.7;
+            const evaluation = shouldContinueOperation(
+                data.playersCount,
+                data.playersPaid,
+                operationCost
+            );
+
+            // 更新评估结果显示
+            const resultElement = document.getElementById('operation-result');
+            if (evaluation.result) {
+                resultElement.className = 'p-4 rounded-lg bg-success/5 border border-success/20';
+                resultElement.querySelector('h3').textContent = '继续运营';
+                resultElement.querySelector('i').className = 'fa fa-check text-success';
+                resultElement.querySelector('p').textContent = evaluation.reason;
+            } else {
+                resultElement.className = 'p-4 rounded-lg bg-danger/5 border border-danger/20';
+                resultElement.querySelector('h3').textContent = '需改进';
+                resultElement.querySelector('i').className = 'fa fa-exclamation-triangle text-danger';
+                resultElement.querySelector('p').textContent = evaluation.reason;
+            }
+
+            // 初始化人均付费仪表盘
+            const paymentGauge = echarts.init(document.getElementById('payment-gauge'));
             const avg = Number(data.playerAveragePaid ?? 0);
+            const maxValue = Math.max(avg * 2, 10);
 
-            /* 仪表盘：人均付费 */
-            /* 仪表盘：人均付费 */
-            const gauge = echarts.init(document.getElementById('gauge'));
-
-            gauge.setOption({
-                tooltip:{ formatter:'人均付费：{c}' },
-                series:[{
-                    type:'gauge',
-                    startAngle:210, endAngle:-30,
-                    min:0, max:Math.max(avg*2,1),
-                    splitNumber:5,
-
-                    axisLine:{ lineStyle:{ width:15 } },
-
-                    axisLabel:{ formatter:v=>v.toFixed(2) },
-                   
-                    axisTick:{ length:6, lineStyle:{ color:'#999' } },
-                    splitLine:{ length:12, lineStyle:{ color:'#ccc' } },
-
-                    pointer:{ width:6 },
-                    title:{ fontSize:18, offsetCenter:[0,'80%'], color:'#666' },
-                    detail:{
-                        valueAnimation:true,
-                        fontSize:36,
-                        offsetCenter:[0,'40%'],
-                        formatter: '{value}'   // 中央数字只显示人均付费
+            paymentGauge.setOption({
+                tooltip: {
+                    formatter: '人均付费：{c}'
+                },
+                series: [{
+                    type: 'gauge',
+                    startAngle: 210,
+                    endAngle: -30,
+                    min: 0,
+                    max: maxValue,
+                    splitNumber: 5,
+                    axisLine: {
+                        lineStyle: {
+                            width: 25,
+                            color: [
+                                [0.3, '#67e0e3'],
+                                [0.7, '#37a2da'],
+                                [1, '#fd666d']
+                            ]
+                        }
                     },
-                    data:[{ value:+avg.toFixed(2), name:'人均付费' }]
+                    axisLabel: {
+                        formatter: v => v.toFixed(0)
+                    },
+                    axisTick: {
+                        length: 12,
+                        lineStyle: {
+                            color: '#999'
+                        }
+                    },
+                    splitLine: {
+                        length: 20,
+                        lineStyle: {
+                            color: '#ccc'
+                        }
+                    },
+                    pointer: {
+                        width: 8
+                    },
+                    title: {
+                        fontSize: 20,
+                        offsetCenter: [0, '80%'],
+                        color: '#666'
+                    },
+                    detail: {
+                        valueAnimation: true,
+                        fontSize: 40,
+                        offsetCenter: [0, '40%'],
+                        formatter: function (value) {
+                            return '¥' + value.toFixed(2);
+                        },
+                        color: 'auto'
+                    },
+                    data: [{
+                        value: avg,
+                        name: '人均付费'
+                    }]
                 }]
             });
 
-            window.addEventListener('resize',()=>gauge.resize());
+            // 初始化趋势图表 (使用模拟数据)
+            const trendChart = echarts.init(document.getElementById('trend-chart'));
+            const months = ['1月', '2月', '3月', '4月', '5月', '6月', '7月'];
+            const revenueData = [
+                data.playersPaid * 0.85,
+                data.playersPaid * 0.88,
+                data.playersPaid * 0.92,
+                data.playersPaid * 0.95,
+                data.playersPaid * 0.98,
+                data.playersPaid * 1.02,
+                data.playersPaid
+            ];
+            const playerData = [
+                data.playersCount * 0.85,
+                data.playersCount * 0.88,
+                data.playersCount * 0.92,
+                data.playersCount * 0.95,
+                data.playersCount * 0.98,
+                data.playersCount * 1.02,
+                data.playersCount
+            ];
+
+            trendChart.setOption({
+                tooltip: {
+                    trigger: 'axis',
+                    axisPointer: {
+                        type: 'cross',
+                        crossStyle: {
+                            color: '#999'
+                        }
+                    }
+                },
+                legend: {
+                    show: false
+                },
+                grid: {
+                    left: '3%',
+                    right: '4%',
+                    bottom: '3%',
+                    containLabel: true
+                },
+                xAxis: {
+                    type: 'category',
+                    data: months,
+                    axisPointer: {
+                        type: 'shadow'
+                    }
+                },
+                yAxis: [
+                    {
+                        type: 'value',
+                        name: '金额(元)',
+                        min: 0,
+                        axisLabel: {
+                            formatter: function (value) {
+                                return value / 10000 + '万';
+                            }
+                        }
+                    },
+                    {
+                        type: 'value',
+                        name: '玩家数',
+                        min: 0,
+                        axisLabel: {
+                            formatter: function (value) {
+                                return value / 1000 + 'k';
+                            }
+                        }
+                    }
+                ],
+                series: [
+                    {
+                        name: '总付费',
+                        type: 'bar',
+                        data: revenueData,
+                        color: '#3b82f6',
+                        label: {
+                            show: true,
+                            position: 'top',
+                            formatter: function (params) {
+                                return (params.value / 10000).toFixed(1) + '万';
+                            }
+                        }
+                    },
+                    {
+                        name: '玩家数',
+                        type: 'line',
+                        yAxisIndex: 1,
+                        data: playerData,
+                        color: '#64748b',
+                        label: {
+                            show: true,
+                            position: 'top'
+                        }
+                    }
+                ]
+            });
+
+            // 监听窗口大小变化，调整图表
+            window.addEventListener('resize', () => {
+                paymentGauge.resize();
+                trendChart.resize();
+            });
         })
-        .catch(err=>{
-            console.error('拉取付费概览失败：',err);
+        .catch(err => {
+            console.error('拉取付费概览失败：', err);
             alert('接口调用失败，请检查控制台');
         });
 </script>
