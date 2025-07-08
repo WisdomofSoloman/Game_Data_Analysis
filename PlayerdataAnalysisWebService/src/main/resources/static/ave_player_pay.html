@@ -277,18 +277,18 @@
     function shouldContinueOperation(playerCount, monthlyRevenue, operationCost, minPlayers = 1000, revenueThreshold = 5000.0) {
         const profit = monthlyRevenue - operationCost;
 
-        if (playerCount < minPlayers) {
+        if (playerCount < minPlayers) {// 玩家数量是否达标
             return { result: false, reason: `玩家数量不足(${formatNumber(playerCount)}/${formatNumber(minPlayers)})` };
         }
 
-        if (profit < 0) {
+        if (profit < 0) {//是否处于亏损状态
             return { result: false, reason: `亏损状态(${formatMoney(profit)})` };
         }
 
-        if (monthlyRevenue < revenueThreshold) {
+        if (monthlyRevenue < revenueThreshold) {//收入是否达到预期门槛
             return { result: false, reason: `收入未达预期(${formatMoney(monthlyRevenue)}/${formatMoney(revenueThreshold)})` };
         }
-
+        //所有校验通过：判定为适合继续运营，返回健康状态描述
         return { result: true, reason: `健康运营(玩家:${formatNumber(playerCount)}, 利润:${formatMoney(profit)})` };
     }
 
